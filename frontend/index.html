@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyFlow - Premium Airline</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="navbar fade-in">
+        <h1 class="logo">✈️ SkyFlow</h1>
+        <div class="nav-controls">
+            <button id="lang-toggle" onclick="toggleLanguage()" class="lang-btn">🌐 বাংলা</button>
+            <button id="nav-login-btn" class="btn-outline" onclick="openAuthModal()" data-en="Login / Register" data-bn="লগইন / রেজিস্টার">Login / Register</button>
+            <span id="welcome-text"></span>
+            <button id="logout-btn" style="display: none;" class="btn-outline" onclick="logout()" data-en="Logout" data-bn="লগআউট">Logout</button>
+        </div>
+    </header>
+
+    <div id="auth-modal" class="modal">
+        <div class="modal-content card-3d">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <div class="auth-tabs">
+                <button id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')" data-en="Login" data-bn="লগইন">Login</button>
+                <button id="tab-register" class="tab-btn" onclick="switchAuthTab('register')" data-en="Register" data-bn="রেজিস্টার">Register</button>
+            </div>
+            
+            <div id="login-form">
+                <h3 data-en="Welcome Back" data-bn="স্বাগতম">Welcome Back</h3>
+                <input type="email" id="login-email" placeholder="Email Address">
+                <input type="password" id="login-password" placeholder="Password">
+                <button class="btn-primary w-100" onclick="login()" data-en="Login" data-bn="লগইন">Login</button>
+            </div>
+
+            <div id="register-form" style="display: none;">
+                <h3 data-en="Create Account" data-bn="অ্যাকাউন্ট তৈরি করুন">Create Account</h3>
+                <input type="text" id="reg-name" placeholder="Full Name">
+                <input type="email" id="reg-email" placeholder="Email Address">
+                <input type="password" id="reg-password" placeholder="Password">
+                <select id="reg-role">
+                    <option value="customer" data-en="Customer" data-bn="কাস্টমার">Customer</option>
+                    <option value="admin" data-en="Admin" data-bn="অ্যাডমিন">Admin</option>
+                </select>
+                <button class="btn-primary w-100" onclick="register()" data-en="Register" data-bn="রেজিস্টার">Register</button>
+            </div>
+            <p id="auth-msg" class="msg"></p>
+        </div>
+    </div>
+
+    <section class="hero" id="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content slide-up" id="hero-content">
+            <span class="badge" data-en="✈️ Smart Airline Reservation System" data-bn="✈️ স্মার্ট এয়ারলাইন রিজার্ভেশন সিস্টেম">✈️ Smart Airline Reservation System</span>
+            <h2 id="hero-title" data-en="SkyFlow — Easily Find, Book, and Track Flights" data-bn="স্কাইফ্লো — সহজে ফ্লাইট খুঁজুন, বুক করুন, ট্র্যাক করুন">SkyFlow — Easily Find, Book, and Track Flights</h2>
+            <p id="hero-desc" data-en="A complete full-stack platform. Find flights, select your favorite seats, and travel with comfort." data-bn="একটি সম্পূর্ণ ফুল-স্ট্যাক প্ল্যাটফর্ম। ফ্লাইট খুঁজুন, সিট সিলেক্ট করুন এবং আরামে ভ্রমণ করুন।">A complete full-stack platform. Find flights, select your favorite seats, and travel with comfort.</p>
+            
+            <div class="hero-buttons" id="hero-buttons">
+                <button class="btn-primary" onclick="scrollToSection('search-section')" data-en="Find Flight" data-bn="ফ্লাইট খুঁজুন">Find Flight</button>
+                <button class="btn-outline" onclick="openAuthModal()" data-en="Open Account" data-bn="অ্যাকাউন্ট খুলুন">Open Account</button>
+                <button class="btn-outline" onclick="scrollToSection('track-section')" data-en="Track Flight" data-bn="ফ্লাইট ট্র্যাক করুন">Track Flight</button>
+            </div>
+            <div id="hero-panel-title" class="panel-title-3d-blue" style="display: none;"></div>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- Public: Find & Track Flights -->
+        <section id="public-section" class="grid-2 mt-neg">
+            <div id="search-section" class="card card-3d fade-in">
+                <h3 data-en="🔍 Find a Flight" data-bn="🔍 ফ্লাইট খুঁজুন">🔍 Find a Flight</h3>
+                <input type="text" id="search-query" placeholder="Enter City (e.g. Dhaka) or Flight No">
+                <input type="date" id="search-date">
+                <button class="btn-primary w-100" onclick="searchPublicFlights()" data-en="Search Flights" data-bn="সার্চ করুন">Search Flights</button>
+                <ul id="public-flight-list" class="flight-list mt-10"></ul>
+            </div>
+
+            <div id="track-section" class="card card-3d fade-in" style="animation-delay: 0.2s;">
+                <h3 data-en="📡 Track Flight Status" data-bn="📡 ফ্লাইট স্ট্যাটাস ট্র্যাক করুন">📡 Track Flight Status</h3>
+                <input type="text" id="track-id" placeholder="Flight Number (e.g. BG-202)">
+                <button class="btn-primary w-100" onclick="trackFlight()" data-en="Track Now" data-bn="ট্র্যাক করুন">Track Now</button>
+                <div id="track-result" class="track-result-box"></div>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard -->
+        <section id="admin-section" style="display: none;">
+            <div class="grid-2 mt-neg">
+                <div class="card card-3d">
+                    <h3>➕ Add New Flight</h3>
+                    <input type="text" id="new-flight-num" placeholder="Flight Number (e.g. BG-101)">
+                    <input type="text" id="new-origin" placeholder="Origin (e.g. Dhaka)">
+                    <input type="text" id="new-dest" placeholder="Destination (e.g. Sylhet)">
+                    <label class="text-muted" style="font-size: 0.8rem; margin-bottom: 5px; display: block;">Departure Time</label>
+                    <input type="datetime-local" id="new-dep">
+                    <label class="text-muted" style="font-size: 0.8rem; margin-bottom: 5px; display: block;">Arrival Time</label>
+                    <input type="datetime-local" id="new-arr">
+                    <button class="btn-primary w-100" onclick="addFlight()">Add Flight</button>
+                    <p id="admin-msg" class="msg"></p>
+                </div>
+
+                <div class="card card-3d">
+                    <h3>📋 Flight List & Delete</h3>
+                    <input type="date" id="admin-search-date" onchange="loadAdminFlightsByDate()">
+                    <ul id="admin-flight-list" class="flight-list mt-10"></ul>
+                </div>
+
+                <div class="card card-3d">
+                    <h3>📡 Track Flight & Seats</h3>
+                    <input type="text" id="admin-track-id" placeholder="Flight Number (e.g. BG-101)">
+                    <button class="btn-primary w-100" onclick="trackFlightAdmin()">Track Flight</button>
+                    <div id="admin-track-result" class="track-result-box"></div>
+                </div>
+
+                <div class="card card-3d">
+                    <h3>🎟️ Customer Bookings</h3>
+                    <button class="btn-secondary w-100 mb-10" onclick="loadAllBookings()">Refresh Bookings</button>
+                    <ul id="admin-bookings-list" class="flight-list"></ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Dashboard -->
+        <section id="customer-section" style="display: none;">
+            <div class="grid-2 mt-neg">
+                <div class="card card-3d">
+                    <h3 data-en="✈️ Search & Book Flight" data-bn="✈️ ফ্লাইট খুঁজুন ও বুক করুন">✈️ Search & Book Flight</h3>
+                    <input type="text" id="cust-search" placeholder="City or Flight Name">
+                    <button class="btn-primary w-100" onclick="searchCustomerFlights()" data-en="Search" data-bn="খুঁজুন">Search</button>
+                    <ul id="customer-flight-list" class="flight-list mt-10"></ul>
+                </div>
+
+                <div class="card card-3d">
+                    <h3 data-en="🎟️ My Bookings" data-bn="🎟️ আমার বুকিংসমূহ">🎟️ My Bookings</h3>
+                    <button class="btn-secondary w-100 mb-10" onclick="loadMyBookings()" data-en="Refresh" data-bn="রিফ্রেশ">Refresh</button>
+                    <ul id="my-bookings-list" class="flight-list"></ul>
+                </div>
+            </div>
+
+            <!-- Seat Selection Map -->
+            <div id="seat-selection-section" class="card card-3d mt-20" style="display: none;">
+                <h3 data-en="💺 Select Your Seats" data-bn="💺 সিট নির্বাচন করুন">💺 Select Your Seats</h3>
+                <p id="selected-flight-info" class="text-muted"></p>
+                <div class="plane-body">
+                    <div class="cockpit">Front</div>
+                    <div id="seat-map" class="seat-grid"></div>
+                </div>
+                <div class="seat-legend">
+                    <div><div class="seat available"></div> Available</div>
+                    <div><div class="seat selected"></div> Selected</div>
+                    <div><div class="seat booked"></div> Booked</div>
+                </div>
+                <button class="btn-primary w-100 mt-20" onclick="confirmBooking()" data-en="Confirm Booking" data-bn="বুকিং কনফার্ম করুন">Confirm Booking</button>
+            </div>
+        </section>
+    </main>
+    <script src="js/app.js"></script>
+</body>
+</html>
